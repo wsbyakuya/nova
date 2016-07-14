@@ -29,7 +29,7 @@ func init() {
 }
 
 func loadConfig(filename string) {
-	filename = GlobalPath + "env.conf"
+	filename = GlobalPath + "env.cfg"
 	f, err := os.Open(filename)
 	if err != nil {
 		panic("无法打开配置文件")
@@ -67,7 +67,7 @@ func loadConfig(filename string) {
 }
 
 func loadParas(filename string) {
-	filename = GlobalPath + "api.config"
+	filename = GlobalPath + "api.cfg"
 	Paras = make(map[string][]string)
 	f, err := os.Open(filename)
 	if err != nil {
