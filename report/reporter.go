@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	REPORT_FORMAT      = "测试总量: %d    pass: %d    fail: %d    测试通过率: %%%.3f\n"
+	REPORT_FORMAT      = "测试总量: %d    pass: %d    fail: %d    测试通过率: %.2f%%\n"
 	REPORT_TIME_FORMAT = "测试用时: %dms              平均用时: %dms\n"
 )
 
@@ -27,7 +27,7 @@ type Reporter struct {
 
 func NewReporter(size, timeout int) *Reporter {
 	return &Reporter{
-		size:       size,
+		size:       0,
 		pass_count: 0,
 		time_count: 0,
 		timeout:    timeout,
@@ -36,6 +36,7 @@ func NewReporter(size, timeout int) *Reporter {
 }
 
 func (r *Reporter) Add(m Messager) {
+	r.size++
 	if m.Pass {
 		r.pass_count++
 	}
