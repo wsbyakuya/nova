@@ -35,7 +35,7 @@ func scan(args []string) {
 
 	reporter := report.NewReporter(testSize, Timeout)
 
-	fmt.Printf("开始测试 %s\n", Api)
+	fmt.Printf("开始测试 %s\n%s\n\n", uri, Api)
 	if testSize > 0 {
 		for i, p := range fullList {
 			testItem(uri+const_api+p, reporter)
