@@ -34,9 +34,17 @@ func main() {
 	}
 }
 
+//程序交互通用函数
 func FailAndExit(err error) {
 	fmt.Println(err)
 	os.Exit(1)
+}
+
+func AskAndScan(q string) string {
+	var str string
+	fmt.Print(q)
+	fmt.Scanln(&str)
+	return str
 }
 
 //检测字符串切片是否包含某字符串

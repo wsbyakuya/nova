@@ -16,7 +16,14 @@ func init() {
 }
 
 func newFunc(args []string) {
-	newApi := args[0]
+	var newApi string
+	if len(args) > 0 {
+		newApi = args[0]
+	} else {
+		q := "请输入要创建的api --> "
+		newApi = AskAndScan(q)
+	}
+
 	if []byte(newApi)[0] != '/' {
 		newApi = "/" + newApi
 	}
@@ -25,15 +32,13 @@ func newFunc(args []string) {
 	if len(dirName) > 0 && dirName[0] == '_' {
 		dirName = dirName[1:]
 	}
-
+	dirStringName := string(dirName)
 	var err error
-	err = os.Mkdir(string(dirName), os.ModeDir)
+	err = os.Mkdir(dirStringName, os.ModeDir)
 	if err != nil {
 		if os.IsExist(err) {
-			fmt.Print("该测试目录已存在，是否覆盖测试文件(y/n)？")
-			var intxt string
-			fmt.Scanln(&intxt)
-			if intxt != "y" {
+			q := "该测试目录已存在，是否覆盖测试文件(y/n)？"
+			if AskAndScan(q) != "y" {
 				return
 			}
 		} else {
@@ -41,7 +46,7 @@ func newFunc(args []string) {
 		}
 	}
 
-	err = newApiConfigFile(string(dirName)+"\\api.cfg", newApi)
+	err = newApiConfigFile(dirStringName+"\\api.cfg", newApi)
 	if err != nil {
 		FailAndExit(err)
 	}
