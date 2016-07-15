@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -24,17 +25,31 @@ var (
 )
 
 func init() {
-	loadConfig("")
-	loadParas("")
+	loadConfig("env.cfg")
+	loadParas("api.cfg")
 }
 
 func loadConfig(filename string) {
-	filename = GlobalPath + "env.cfg"
-	f, err := os.Open(filename)
+	var f *os.File
+	var err error
+	f, err = os.Open(filename)
 	if err != nil {
-		panic("无法打开配置文件")
+		//在当前目录未找到环境配置文件，将搜索上级目录中配置文件
+		if os.IsNotExist(err) {
+			if parentDir := getParentDir(); parentDir != "" {
+				f, err = os.Open(parentDir + "\\" + filename)
+				if err != nil {
+					FailAndExit(err)
+				}
+			} else {
+				FailAndExit(err)
+			}
+		} else {
+			FailAndExit(err)
+		}
 	}
 	defer f.Close()
+
 	rd := bufio.NewReader(f)
 	for {
 		line, err := rd.ReadString('\n')
@@ -67,11 +82,16 @@ func loadConfig(filename string) {
 }
 
 func loadParas(filename string) {
-	filename = GlobalPath + "api.cfg"
+	filename = GlobalPath + filename
 	Paras = make(map[string][]string)
 	f, err := os.Open(filename)
 	if err != nil {
-		panic("无法打开参数文件")
+		if os.IsNotExist(err) {
+			fmt.Println("在当前目录未找到api参数配置文件")
+			return
+		} else {
+			FailAndExit(err)
+		}
 	}
 	defer f.Close()
 
@@ -118,4 +138,14 @@ func parseKeyValue(line string) (key, value string) {
 	k := strings.Trim(strs[0], " ")
 	v := strings.Trim(strs[1], " ")
 	return k, v
+}
+
+func getParentDir() string {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	runes := []rune(currentDir)
+	l := strings.LastIndex(currentDir, "\\")
+	return string(runes[0:l])
 }
