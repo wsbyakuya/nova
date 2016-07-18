@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -87,7 +86,6 @@ func loadParas(filename string) {
 	f, err := os.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			fmt.Println("在当前目录未找到api参数配置文件")
 			return
 		} else {
 			FailAndExit(err)

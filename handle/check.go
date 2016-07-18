@@ -3,6 +3,7 @@ package handle
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 )
 
 type Items []interface{}
@@ -53,4 +54,28 @@ func itemsNum(body []byte) int {
 	items := Items{}
 	json.Unmarshal(body, &items)
 	return len(items)
+}
+
+const (
+	DIFFERENT_LENGTH_MESSAGE = "返回结果长度不等"
+	SAMPLE_DIFF_FORMAT       = "差别过大,样本误差率: %%%.3f"
+)
+
+//对比两个body在限制差异率内是否相同
+func CompareBody(a, b []byte, maxDiff float64) (bool, string) {
+	length := len(a)
+	count := 0
+	if len(b) != length {
+		return false, DIFFERENT_LENGTH_MESSAGE
+	}
+	for i, _ := range a {
+		if a[i] != b[i] {
+			count++
+		}
+	}
+	q := float64(count) / float64(length)
+	if q < maxDiff {
+		return true, ""
+	}
+	return false, fmt.Sprintf(SAMPLE_DIFF_FORMAT, q*100)
 }
