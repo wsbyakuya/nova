@@ -8,11 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	PASS_REPORT_FORMAT = "测试总量: %d    pass: %d    fail: %d    测试通过率: %%%.3f \n"
-	PASS_TIME_FORMAT   = "测试用时: %.3fs    平均用时: %.3fs\n"
-)
-
 var cmdCompare = &Command{
 	Name:          "compare",
 	ConfigRequest: CMD_BOTH_CONFIG,
@@ -85,6 +80,7 @@ func compareTestItem(url1, url2 string, r *report.Reporter) {
 		Url:        url2,
 		Time:       res2.Time,
 		StatusCode: res2.StatusCode,
+		Body:       string(res2.Body),
 	}
 	r.Add(&m)
 }

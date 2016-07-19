@@ -11,7 +11,6 @@ import (
 var (
 	Host1   string
 	Host2   string
-	Hosts   []string
 	Port    string
 	MaxDiff float64
 	Timeout int
@@ -22,11 +21,6 @@ var (
 	Api        string
 	Paras      map[string][]string
 )
-
-// func init() {
-// 	loadConfig("env.cfg")
-// 	loadParas("api.cfg")
-// }
 
 func loadConfig(filename string) {
 	var f *os.File
@@ -63,8 +57,6 @@ func loadConfig(filename string) {
 				Host1 = v
 			case "host2":
 				Host2 = v
-			case "hosts":
-				Hosts = SplitAndTrim(v)
 			case "port":
 				Port = v
 			case "max_diff":
