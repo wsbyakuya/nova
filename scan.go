@@ -27,7 +27,10 @@ func scan(args []string) {
 		const_api = Api + "?"
 	}
 	if len(ConstParas) > 0 {
-		const_api = const_api + strings.Join(ConstParas, "&") + "&"
+		const_api = const_api + strings.Join(ConstParas, "&")
+		if len(Paras) > 0 {
+			const_api += "&"
+		}
 	}
 
 	fullList := fetch.GetFullList(Paras)
@@ -47,6 +50,7 @@ func scan(args []string) {
 		fmt.Println("测试完成")
 	}
 	fmt.Println(reporter.Report())
+	reporter.ExportHTML()
 }
 
 func testItem(url string, r *report.Reporter) {
@@ -57,9 +61,9 @@ func testItem(url string, r *report.Reporter) {
 	m := report.Messager{
 		Pass:       !handle.IsEmpty(res.Body),
 		Url:        res.Url,
-		Body:       res.Body,
+		Body:       string(res.Body),
 		StatusCode: res.StatusCode,
 		Time:       res.Time,
 	}
-	r.Add(m)
+	r.Add(&m)
 }

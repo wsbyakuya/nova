@@ -12,7 +12,7 @@ const (
 type Messager struct {
 	Pass       bool
 	Url        string
-	Body       []byte
+	Body       string
 	StatusCode int
 	Time       int `单位：ms`
 }
@@ -22,7 +22,8 @@ type Reporter struct {
 	pass_count int
 	time_count int
 	timeout    int
-	msgs       []Messager
+	ReportText string
+	Msgs       []*Messager
 }
 
 func NewReporter(size, timeout int) *Reporter {
@@ -31,18 +32,18 @@ func NewReporter(size, timeout int) *Reporter {
 		pass_count: 0,
 		time_count: 0,
 		timeout:    timeout,
-		msgs:       make([]Messager, 0, size),
+		Msgs:       make([]*Messager, 0, size),
 	}
 }
 
-func (r *Reporter) Add(m Messager) {
+func (r *Reporter) Add(m *Messager) {
 	r.size++
 	if m.Pass {
 		r.pass_count++
 	}
 	r.time_count += m.Time
 
-	r.msgs = append(r.msgs, m)
+	r.Msgs = append(r.Msgs, m)
 }
 
 func (r *Reporter) Report() string {

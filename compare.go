@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/wsbyakuya/nova/fetch"
 	"github.com/wsbyakuya/nova/handle"
+	"github.com/wsbyakuya/nova/report"
 	"strings"
-	"time"
 )
 
 const (
@@ -24,12 +24,10 @@ func init() {
 
 func compareTestAll(args []string) {
 	//开始测试
-	begin_time := time.Now()
 	var uri1, uri2 string
 	if len(args) > 0 {
 		//根据参数选择host
 	}
-	sum, pass_count := 0, 0
 	//组装url
 	//默认对比host1和host2
 	uri1 = "http://" + Host1
@@ -43,30 +41,35 @@ func compareTestAll(args []string) {
 		const_api = Api + "?"
 	}
 	if len(ConstParas) > 0 {
-		const_api = const_api + strings.Join(ConstParas, "&") + "&"
+		const_api = const_api + strings.Join(ConstParas, "&")
+		if len(Paras) > 0 {
+			const_api += "&"
+		}
 	}
 
 	fullList := fetch.GetFullList(Paras)
+	testSize := len(fullList)
 
-	for _, v := range fullList {
-		interface_test := const_api + v
-		if pass := compareTestItem(uri1, uri2, interface_test); pass {
-			pass_count++
+	reporter := report.NewReporter(testSize, Timeout)
+	fmt.Printf("开始测试 %s  vs  %s\n%s\n\n", uri1, uri2, Api)
+	if testSize > 0 {
+		for i, v := range fullList {
+			fmt.Printf("\r正在测试    %d/%d", i+1, testSize)
+			url1 := uri1 + const_api + v
+			url2 := uri2 + const_api + v
+			compareTestItem(url1, url2, reporter)
 		}
-		sum++
+		fmt.Println("\n测试完成")
+	} else {
+		url1 := uri1 + const_api
+		url2 := uri2 + const_api
+		compareTestItem(url1, url2, reporter)
+		fmt.Println("测试完成")
 	}
-
-	end_time := time.Now()
-	fmt.Printf(PASS_REPORT_FORMAT, sum, pass_count, sum-pass_count, float64(pass_count)/float64(sum)*100)
-	time_use := end_time.Sub(begin_time).Seconds()
-	fmt.Printf(PASS_TIME_FORMAT, time_use, time_use/float64(sum))
+	fmt.Println(reporter.Report())
 }
 
-func compareTestItem(uri1, uri2, ifs string) bool {
-	fmt.Println("正在测试接口: " + ifs)
-	url1 := uri1 + ifs
-	url2 := uri2 + ifs
-
+func compareTestItem(url1, url2 string, r *report.Reporter) {
 	res1, err1 := fetch.HttpGet(url1)
 	if err1 != nil {
 		FailAndExit(err1)
@@ -76,11 +79,11 @@ func compareTestItem(uri1, uri2, ifs string) bool {
 		FailAndExit(err2)
 	}
 
-	if pass, message := handle.CompareBody(res1.Body, res2.Body, MaxDiff); pass {
-		fmt.Println("Pass")
-		return true
-	} else {
-		fmt.Println("Failed: " + message)
-		return false
+	m := report.Messager{
+		Pass:       handle.CompareBody(res1.Body, res2.Body, MaxDiff),
+		Url:        url2,
+		Time:       res2.Time,
+		StatusCode: res2.StatusCode,
 	}
+	r.Add(&m)
 }

@@ -3,7 +3,6 @@ package handle
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 type Items []interface{}
@@ -62,11 +61,11 @@ const (
 )
 
 //对比两个body在限制差异率内是否相同
-func CompareBody(a, b []byte, maxDiff float64) (bool, string) {
+func CompareBody(a, b []byte, maxDiff float64) bool {
 	length := len(a)
 	count := 0
 	if len(b) != length {
-		return false, DIFFERENT_LENGTH_MESSAGE
+		return false
 	}
 	for i, _ := range a {
 		if a[i] != b[i] {
@@ -75,7 +74,7 @@ func CompareBody(a, b []byte, maxDiff float64) (bool, string) {
 	}
 	q := float64(count) / float64(length)
 	if q < maxDiff {
-		return true, ""
+		return true
 	}
-	return false, fmt.Sprintf(SAMPLE_DIFF_FORMAT, q*100)
+	return false
 }
