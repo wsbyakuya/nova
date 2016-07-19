@@ -9,7 +9,8 @@ import (
 )
 
 var cmdScan = &Command{
-	Name: "scan",
+	Name:          "scan",
+	ConfigRequest: CMD_BOTH_CONFIG,
 }
 
 func init() {

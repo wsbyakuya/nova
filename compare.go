@@ -14,7 +14,8 @@ const (
 )
 
 var cmdCompare = &Command{
-	Name: "compare",
+	Name:          "compare",
+	ConfigRequest: CMD_BOTH_CONFIG,
 }
 
 func init() {

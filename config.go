@@ -23,10 +23,10 @@ var (
 	Paras      map[string][]string
 )
 
-func init() {
-	loadConfig("env.cfg")
-	loadParas("api.cfg")
-}
+// func init() {
+// 	loadConfig("env.cfg")
+// 	loadParas("api.cfg")
+// }
 
 func loadConfig(filename string) {
 	var f *os.File

@@ -6,16 +6,20 @@ import (
 
 var (
 	cmdVersion = &Command{
-		Name: "version",
+		Name:          "version",
+		ConfigRequest: CMD_NO_CONFIG,
 	}
 	cmdApi = &Command{
-		Name: "api",
+		Name:          "api",
+		ConfigRequest: CMD_API_CONFIG,
 	}
 	cmdEnv = &Command{
-		Name: "env",
+		Name:          "env",
+		ConfigRequest: CMD_ENV_CONFIG,
 	}
 	cmdHelp = &Command{
-		Name: "help",
+		Name:          "help",
+		ConfigRequest: CMD_NO_CONFIG,
 	}
 )
 
@@ -53,8 +57,11 @@ func showEnv(args []string) {
 
 func showUsage(args []string) {
 	msg := `命令参数
-nova version 显示当前版本号
+nova api     显示待测api参数信息
+nova compare 对比Host1和Host2同一接口返回量
 nova env     显示测试环境设置
-nova api     显示待测api参数信息`
+nova scan    扫描接口的所有参量组合
+nova version 显示当前版本号
+`
 	fmt.Println(msg)
 }

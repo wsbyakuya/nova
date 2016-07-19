@@ -6,14 +6,22 @@ import (
 	"os"
 )
 
-const version = "0.2.3"
+const version = "0.5.0"
+
+const (
+	CMD_NO_CONFIG = iota
+	CMD_API_CONFIG
+	CMD_ENV_CONFIG
+	CMD_BOTH_CONFIG
+)
 
 var commands = []*Command{}
 var GlobalPath string
 
 type Command struct {
-	Run  func([]string)
-	Name string
+	Run           func([]string)
+	Name          string
+	ConfigRequest int
 }
 
 func init() {
@@ -28,9 +36,19 @@ func main() {
 	}
 	for _, cmd := range commands {
 		if cmd.Name == args[0] {
+			loadConfigFiles(cmd.ConfigRequest)
 			cmd.Run(args[1:])
 			return
 		}
+	}
+}
+
+func loadConfigFiles(requestNum int) {
+	if requestNum&2 == 2 {
+		loadConfig("env.cfg")
+	}
+	if requestNum&1 == 1 {
+		loadParas("api.cfg")
 	}
 }
 
