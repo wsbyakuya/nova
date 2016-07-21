@@ -60,9 +60,9 @@ func FailAndExit(err error) {
 	os.Exit(1)
 }
 
-func AskAndScan(q string) string {
+func AskAndScan(question string) string {
 	var str string
-	fmt.Print(q)
+	fmt.Print(question)
 	fmt.Scanln(&str)
 	return str
 }
@@ -70,10 +70,12 @@ func AskAndScan(q string) string {
 //检测字符串切片是否包含某字符串
 type Args []string
 
-func (a Args) Contains(str string) bool {
+func (a Args) Contains(strs ...string) bool {
 	for _, v := range a {
-		if v == str {
-			return true
+		for _, k := range strs {
+			if v == k {
+				return true
+			}
 		}
 	}
 	return false
