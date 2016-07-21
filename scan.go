@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/wsbyakuya/nova/fetch"
 	"github.com/wsbyakuya/nova/handle"
 	"github.com/wsbyakuya/nova/report"
-	"strings"
 )
 
 var cmdScan = &Command{
@@ -13,37 +14,26 @@ var cmdScan = &Command{
 	ConfigRequest: CMD_BOTH_CONFIG,
 }
 
-//命令行参数控制
-var willExport, willOpen bool
-
 func init() {
 	commands = append(commands, cmdScan)
 	cmdScan.Run = scan
 }
 
 func scan(args []string) {
-	aa := Args(args)
-	argsMap := aa.Parse()
-	fmt.Println(argsMap)
-	if argsMap['h'] || argsMap['e'] {
-		willExport = true
-	}
-	if argsMap['o'] {
-		willOpen = true
-	}
+	argsMap := Args(args).Parse()
 
 	uri := "http://" + Host1
 	if Port != "" {
 		uri = uri + ":" + Port
 	}
-	const_api := Api
+	constAPI := Api
 	if len(Paras) > 0 || len(ConstParas) > 0 {
-		const_api = Api + "?"
+		constAPI = Api + "?"
 	}
 	if len(ConstParas) > 0 {
-		const_api = const_api + strings.Join(ConstParas, "&")
+		constAPI = constAPI + strings.Join(ConstParas, "&")
 		if len(Paras) > 0 {
-			const_api += "&"
+			constAPI += "&"
 		}
 	}
 
@@ -55,18 +45,18 @@ func scan(args []string) {
 	fmt.Printf("\n开始测试 %s\n%s\n\n", uri, Api)
 	if testSize > 0 {
 		for i, p := range fullList {
-			testItem(uri+const_api+p, reporter)
+			testItem(uri+constAPI+p, reporter)
 			fmt.Printf("\r正在测试    %d/%d", i+1, testSize)
 		}
 		fmt.Println("\n测试完成")
 	} else {
-		testItem(uri+const_api, reporter)
+		testItem(uri+constAPI, reporter)
 		fmt.Println("测试完成")
 	}
 	fmt.Println(reporter.Report())
 
-	if willExport {
-		reporter.ExportHTML(willOpen)
+	if argsMap['h'] || argsMap['e'] {
+		reporter.ExportHTML(argsMap['o'])
 	}
 }
 

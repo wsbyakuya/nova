@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const version = "0.5.0"
+const version = "0.6.0"
 
 const (
 	CMD_NO_CONFIG = iota
@@ -17,8 +17,7 @@ const (
 
 var commands = []*Command{}
 var (
-	GlobalPath         string
-	argExport, argOpen bool
+	GlobalPath string
 )
 
 type Command struct {
@@ -82,13 +81,10 @@ func (a Args) Contains(str string) bool {
 
 func (a Args) Parse() map[byte]bool {
 	m := make(map[byte]bool, 5)
-	fmt.Println(a)
 	for _, v := range a {
 		ss := []byte(v)
-		fmt.Println(ss)
 		if len(ss) > 1 && ss[0] == '-' {
 			for _, k := range ss[1:] {
-				fmt.Println("map key ", k)
 				m[k] = true
 			}
 		}

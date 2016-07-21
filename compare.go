@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/wsbyakuya/nova/fetch"
 	"github.com/wsbyakuya/nova/handle"
 	"github.com/wsbyakuya/nova/report"
-	"strings"
 )
 
 var cmdCompare = &Command{
@@ -19,6 +20,7 @@ func init() {
 }
 
 func compareTestAll(args []string) {
+	argsMap := Args(args).Parse()
 	//开始测试
 	var uri1, uri2 string
 	if len(args) > 0 {
@@ -32,14 +34,14 @@ func compareTestAll(args []string) {
 		uri1 = uri1 + ":" + Port
 		uri2 = uri2 + ":" + Port
 	}
-	const_api := Api
+	constAPI := Api
 	if len(Paras) > 0 || len(ConstParas) > 0 {
-		const_api = Api + "?"
+		constAPI = Api + "?"
 	}
 	if len(ConstParas) > 0 {
-		const_api = const_api + strings.Join(ConstParas, "&")
+		constAPI = constAPI + strings.Join(ConstParas, "&")
 		if len(Paras) > 0 {
-			const_api += "&"
+			constAPI += "&"
 		}
 	}
 
@@ -51,18 +53,22 @@ func compareTestAll(args []string) {
 	if testSize > 0 {
 		for i, v := range fullList {
 			fmt.Printf("\r正在测试    %d/%d", i+1, testSize)
-			url1 := uri1 + const_api + v
-			url2 := uri2 + const_api + v
+			url1 := uri1 + constAPI + v
+			url2 := uri2 + constAPI + v
 			compareTestItem(url1, url2, reporter)
 		}
 		fmt.Println("\n测试完成")
 	} else {
-		url1 := uri1 + const_api
-		url2 := uri2 + const_api
+		url1 := uri1 + constAPI
+		url2 := uri2 + constAPI
 		compareTestItem(url1, url2, reporter)
 		fmt.Println("测试完成")
 	}
 	fmt.Println(reporter.Report())
+
+	if argsMap['h'] || argsMap['e'] {
+		reporter.ExportHTML(argsMap['o'])
+	}
 }
 
 func compareTestItem(url1, url2 string, r *report.Reporter) {
