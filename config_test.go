@@ -7,7 +7,6 @@ import (
 )
 
 func TestGetParas(t *testing.T) {
-	loadParas()
 	fmt.Println(Api)
 	list := fetch.GetFullList(Paras)
 	for _, v := range list {
