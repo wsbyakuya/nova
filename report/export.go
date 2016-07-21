@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-func (r *Reporter) ExportHTML() {
+func (r *Reporter) ExportHTML(open bool) {
 	for i, _ := range r.Msgs {
 		r.Msgs[i].Body = formatJSON(r.Msgs[i].Body)
 	}
@@ -27,7 +27,9 @@ func (r *Reporter) ExportHTML() {
 		panic(err)
 	}
 
-	defer openHTML()
+	if open {
+		defer openHTML()
+	}
 }
 
 func openHTML() {

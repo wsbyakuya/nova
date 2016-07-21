@@ -13,12 +13,25 @@ var cmdScan = &Command{
 	ConfigRequest: CMD_BOTH_CONFIG,
 }
 
+//命令行参数控制
+var willExport, willOpen bool
+
 func init() {
 	commands = append(commands, cmdScan)
 	cmdScan.Run = scan
 }
 
 func scan(args []string) {
+	aa := Args(args)
+	argsMap := aa.Parse()
+	fmt.Println(argsMap)
+	if argsMap['h'] || argsMap['e'] {
+		willExport = true
+	}
+	if argsMap['o'] {
+		willOpen = true
+	}
+
 	uri := "http://" + Host1
 	if Port != "" {
 		uri = uri + ":" + Port
@@ -39,7 +52,7 @@ func scan(args []string) {
 
 	reporter := report.NewReporter(testSize, Timeout)
 
-	fmt.Printf("开始测试 %s\n%s\n\n", uri, Api)
+	fmt.Printf("\n开始测试 %s\n%s\n\n", uri, Api)
 	if testSize > 0 {
 		for i, p := range fullList {
 			testItem(uri+const_api+p, reporter)
@@ -51,6 +64,10 @@ func scan(args []string) {
 		fmt.Println("测试完成")
 	}
 	fmt.Println(reporter.Report())
+
+	if willExport {
+		reporter.ExportHTML(willOpen)
+	}
 }
 
 func testItem(url string, r *report.Reporter) {

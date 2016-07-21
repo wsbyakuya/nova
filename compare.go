@@ -47,7 +47,7 @@ func compareTestAll(args []string) {
 	testSize := len(fullList)
 
 	reporter := report.NewReporter(testSize, Timeout)
-	fmt.Printf("开始测试 %s  vs  %s\n%s\n\n", uri1, uri2, Api)
+	fmt.Printf("\n开始测试 %s  vs  %s\n%s\n\n", uri1, uri2, Api)
 	if testSize > 0 {
 		for i, v := range fullList {
 			fmt.Printf("\r正在测试    %d/%d", i+1, testSize)

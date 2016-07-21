@@ -16,7 +16,10 @@ const (
 )
 
 var commands = []*Command{}
-var GlobalPath string
+var (
+	GlobalPath         string
+	argExport, argOpen bool
+)
 
 type Command struct {
 	Run           func([]string)
@@ -75,4 +78,20 @@ func (a Args) Contains(str string) bool {
 		}
 	}
 	return false
+}
+
+func (a Args) Parse() map[byte]bool {
+	m := make(map[byte]bool, 5)
+	fmt.Println(a)
+	for _, v := range a {
+		ss := []byte(v)
+		fmt.Println(ss)
+		if len(ss) > 1 && ss[0] == '-' {
+			for _, k := range ss[1:] {
+				fmt.Println("map key ", k)
+				m[k] = true
+			}
+		}
+	}
+	return m
 }

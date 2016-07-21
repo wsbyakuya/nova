@@ -59,7 +59,8 @@ func showApi(args []string) {
 		}
 	}
 	for k, v := range Paras {
-		fmt.Printf(PARA_FORMAT, k, v)
+		str := strings.Join(v, ",")
+		fmt.Printf(PARA_FORMAT, k, str)
 	}
 }
 
@@ -74,11 +75,18 @@ func showEnv(args []string) {
 }
 
 func showUsage(args []string) {
-	msg := `命令参数
-nova api     显示待测api参数信息
-nova compare 对比Host1和Host2同一接口返回量
-nova env     显示测试环境设置
-nova scan    扫描接口的所有参量组合
-nova version 显示当前版本号`
+	msg := `nova is a tool for RESTful api test.
+
+Uasge:
+
+	nova command [arguments]
+
+Commands:
+
+	nova api         显示待测api参数信息
+	nova compare     对比Host1和Host2同一接口返回量
+	nova env         显示测试环境设置
+	nova scan        扫描接口的所有参量组合
+	nova version     显示当前版本号`
 	fmt.Println(msg)
 }
