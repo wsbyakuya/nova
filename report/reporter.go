@@ -24,6 +24,7 @@ type Reporter struct {
 	timeout    int
 	ReportText string
 	Msgs       []*Messager
+	IsSpread   bool
 }
 
 func NewReporter(size, timeout int) *Reporter {

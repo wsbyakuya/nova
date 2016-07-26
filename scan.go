@@ -55,6 +55,9 @@ func scan(args []string) {
 	}
 	fmt.Println(reporter.Report())
 
+	if argsMap['b'] {
+		reporter.IsSpread = true
+	}
 	if argsMap['h'] || argsMap['e'] {
 		reporter.ExportHTML(argsMap['o'])
 	}

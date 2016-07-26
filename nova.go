@@ -46,10 +46,10 @@ func main() {
 }
 
 func loadConfigFiles(requestNum int) {
-	if requestNum&2 == 2 {
+	if requestNum&CMD_ENV_CONFIG == CMD_ENV_CONFIG {
 		loadConfig("env.cfg")
 	}
-	if requestNum&1 == 1 {
+	if requestNum&CMD_API_CONFIG == CMD_API_CONFIG {
 		loadParas("api.cfg")
 	}
 }

@@ -125,6 +125,7 @@ const HTMLTPL = `<!doctype html>
 <BODY>
 <div class="container">
 <pre>{{.ReportText}}</pre>
+{{$isSpread := .IsSpread}}
 {{range .Msgs}}
 	<div class="item">
 		<div class="top">
@@ -137,8 +138,8 @@ const HTMLTPL = `<!doctype html>
 			<div class="time">{{.Time}} ms</div>
 		</div>
 		<div class="content">
-			<div onclick="expand(event)">Expand body</div>
-			<div style="display:none;" onclick="shrink(event)">
+			<div style="display:{{if $isSpread}}none{{else}}block{{end}}" onclick="expand(event)">Spread body</div>
+			<div style="display:{{if $isSpread}}block{{else}}none{{end}};" onclick="shrink(event)">
 				<pre>{{.Body}}</pre>
 			</div>
 		</div>
