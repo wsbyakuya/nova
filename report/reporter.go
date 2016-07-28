@@ -15,6 +15,7 @@ type Messager struct {
 	Body       string
 	StatusCode int
 	Time       int `单位：ms`
+	ItemNum    int
 }
 
 type Reporter struct {

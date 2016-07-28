@@ -107,7 +107,7 @@ const HTMLTPL = `<!doctype html>
 }
 </style>
 <script type="text/javascript">
-	function expand(event){
+	function spread(event){
 		var thisDiv = event.target;
 		nextNode = thisDiv.nextElementSibling;
 		nextNode.style.display="block";
@@ -138,7 +138,7 @@ const HTMLTPL = `<!doctype html>
 			<div class="time">{{.Time}} ms</div>
 		</div>
 		<div class="content">
-			<div style="display:{{if $isSpread}}none{{else}}block{{end}}" onclick="expand(event)">Spread body</div>
+			<div style="display:{{if $isSpread}}none{{else}}block{{end}}" onclick="spread(event)">Spread body&nbsp|&nbsp{{.ItemNum}} item{{if .ItemNum}}s{{end}}</div>
 			<div style="display:{{if $isSpread}}block{{else}}none{{end}};" onclick="shrink(event)">
 				<pre>{{.Body}}</pre>
 			</div>

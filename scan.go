@@ -22,6 +22,10 @@ func init() {
 func scan(args []string) {
 	argsMap := Args(args).Parse()
 
+	if argsMap['c'] {
+		loadCookies("cookies.cfg")
+	}
+
 	uri := "http://" + Host1
 	if Port != "" {
 		uri = uri + ":" + Port
@@ -64,16 +68,28 @@ func scan(args []string) {
 }
 
 func testItem(url string, r *report.Reporter) {
-	res, err := fetch.HttpGet(url)
+	req, err := fetch.NewNovaRequest("GET", url)
 	if err != nil {
-		panic(err)
+		FailAndExit(err)
+	}
+	req.SetCookies(Cookies)
+
+	res, err2 := req.Do()
+	if err2 != nil {
+		FailAndExit(err)
+	}
+	itemNum := handle.ItemsNum(res.Body)
+	pass := false
+	if itemNum > 0 {
+		pass = true
 	}
 	m := report.Messager{
-		Pass:       !handle.IsEmpty(res.Body),
+		Pass:       pass,
 		Url:        res.Url,
 		Body:       string(res.Body),
 		StatusCode: res.StatusCode,
 		Time:       res.Time,
+		ItemNum:    itemNum,
 	}
 	r.Add(&m)
 }

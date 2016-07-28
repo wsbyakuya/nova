@@ -20,6 +20,7 @@ var (
 	ConstParas []string
 	Api        string
 	Paras      map[string][]string
+	Cookies    map[string]string
 )
 
 func loadConfig(filename string) {
@@ -111,6 +112,38 @@ func loadParas(filename string) {
 			break
 		}
 	}
+}
+
+func loadCookies(filename string) {
+	filename = GlobalPath + filename
+	Cookies = make(map[string]string)
+
+	f, err := os.Open(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return
+		} else {
+			FailAndExit(err)
+		}
+	}
+	defer f.Close()
+
+	rd := bufio.NewReader(f)
+	for {
+		line, err := rd.ReadString('\n')
+		line = strings.Trim(line, "\r\n")
+		if line != "" {
+			if line[0] == '#' {
+				continue
+			}
+			k, v := parseKeyValue(line)
+			Cookies[k] = v
+		}
+		if err == io.EOF {
+			break
+		}
+	}
+
 }
 
 func SplitAndTrim(line string) []string {
