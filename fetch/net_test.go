@@ -10,5 +10,6 @@ func TestHttpGet(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(res.StatusCode)
+	t.Log(res.Status)
 	t.Log(res.Time)
 }

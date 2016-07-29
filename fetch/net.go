@@ -57,6 +57,7 @@ func (r *NovaRequest) Do() (response *Response, err error) {
 	return &Response{
 		Body:       body,
 		Url:        r.request.URL.String(),
+		Status:     res.Status,
 		StatusCode: res.StatusCode,
 		Time:       int(timeUse),
 	}, nil
@@ -65,35 +66,16 @@ func (r *NovaRequest) Do() (response *Response, err error) {
 type Response struct {
 	Body       []byte
 	Url        string
+	Status     string
 	StatusCode int
 	Time       int `ms`
 }
 
 func HttpGet(urlStr string) (response *Response, err error) {
-	req, err := http.NewRequest("GET", urlStr, nil)
+	req, err := NewNovaRequest("GET", urlStr)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("cache-control", "no-cache")
-	start := time.Now()
-
-	res, err2 := http.DefaultClient.Do(req)
-	if err2 != nil {
-		return nil, errors.New("无法获取连接：" + urlStr + "\n请检查服务器运行情况\n")
-	}
-	time_use := time.Since(start).Nanoseconds() / 1E6
-
-	defer res.Body.Close()
-
-	body, err3 := ioutil.ReadAll(res.Body)
-	if err3 != nil {
-		return nil, err3
-	}
-	r := Response{
-		Body:       body,
-		Url:        urlStr,
-		StatusCode: res.StatusCode,
-		Time:       int(time_use),
-	}
-	return &r, nil
+	res, err2 := req.Do()
+	return res, err2
 }

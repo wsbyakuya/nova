@@ -13,8 +13,11 @@ type Messager struct {
 	Pass       bool
 	Url        string
 	Body       string
+	Status     string
 	StatusCode int
+	StatusOK   bool
 	Time       int `单位：ms`
+	TimeOK     bool
 	ItemNum    int
 }
 
@@ -44,7 +47,12 @@ func (r *Reporter) Add(m *Messager) {
 		r.pass_count++
 	}
 	r.time_count += m.Time
-
+	if m.StatusCode < 299 {
+		m.StatusOK = true
+	}
+	if m.Time < r.timeout {
+		m.TimeOK = true
+	}
 	r.Msgs = append(r.Msgs, m)
 }
 

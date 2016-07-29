@@ -34,8 +34,13 @@ func (r *Reporter) ExportHTML(open bool) {
 
 func openHTML() {
 	cmd := exec.Command("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
-	cmd.Args = append(cmd.Args, "report.html")
-	cmd.Run()
+	file := "report.html"
+	path, err := os.Getwd()
+	if err == nil {
+		file = path + "/" + file
+	}
+	cmd.Args = append(cmd.Args, file)
+	cmd.Start()
 }
 
 func formatJSON(s string) string {
@@ -76,7 +81,7 @@ const HTMLTPL = `<!doctype html>
 }
 .content{
 	text-align:left;
-	margin-top: 20px;
+	margin-top: 15px;
 	margin-bottom: 15px;
 }
 .url{
@@ -87,7 +92,7 @@ const HTMLTPL = `<!doctype html>
 .statusCode{
 	float: right;
 	width: 20%;
-	color: #F44336;
+	color: #03A9F4;
 	font-size: larger;
 }
 .pass{
@@ -104,6 +109,10 @@ const HTMLTPL = `<!doctype html>
 .time{
 	float: right;
 	width: 20%;
+	padding-top: 8px;
+}
+.wrong{
+	color: #F44336;
 }
 </style>
 <script type="text/javascript">
@@ -130,12 +139,12 @@ const HTMLTPL = `<!doctype html>
 	<div class="item">
 		<div class="top">
 			<div class="url">{{.Url}}</div>
-			<div class="statusCode">{{.StatusCode}}</div>
+			<div class="statusCode"{{if not .StatusOK}} style="color:#F44336"{{end}}>{{.Status}}</div>
 		</div>
 		<div class="middle">
-			<div class="pass">{{if .Pass}}Pass{{else}}Fail{{end}}</div>
+			<div class="pass"{{if .Pass}}>Pass{{else}} style="color:red;">Fail{{end}}</div>
 			<div class="created"></div>
-			<div class="time">{{.Time}} ms</div>
+			<div class="time"{{if not .TimeOK}} style="color:red;"{{end}}>{{.Time}} ms</div>
 		</div>
 		<div class="content">
 			<div style="display:{{if $isSpread}}none{{else}}block{{end}}" onclick="spread(event)">Spread body&nbsp|&nbsp{{.ItemNum}} item{{if .ItemNum}}s{{end}}</div>

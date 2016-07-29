@@ -87,6 +87,7 @@ func testItem(url string, r *report.Reporter) {
 		Pass:       pass,
 		Url:        res.Url,
 		Body:       string(res.Body),
+		Status:     res.Status,
 		StatusCode: res.StatusCode,
 		Time:       res.Time,
 		ItemNum:    itemNum,
