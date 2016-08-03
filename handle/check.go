@@ -22,7 +22,7 @@ func ItemsNum(body []byte) int {
 	if bytes.Contains(body, []byte("<html>")) {
 		return 0
 	}
-	if bytes.Contains(body, []byte("objects")) {
+	if bytes.Contains(body, []byte("\"objects\":")) {
 		return objectsNum(body)
 	}
 	if num := itemsNum(body); num != 0 {

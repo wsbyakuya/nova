@@ -29,6 +29,10 @@ func (r *NovaRequest) AddCookie(name, value string) {
 	})
 }
 
+func (r *NovaRequest) AddUserAgent(userAgent string) {
+	r.request.Header.Add("User-Agent", userAgent)
+}
+
 func (r *NovaRequest) SetCookies(cookies map[string]string) {
 	if len(cookies) == 0 {
 		return
@@ -46,7 +50,7 @@ func (r *NovaRequest) Do() (response *Response, err error) {
 		return nil, errors.New("无法获取连接：" + r.request.URL.String() + "\n请检查服务器运行情况\n")
 	}
 
-	timeUse := time.Since(start).Nanoseconds() / 1e6
+	timeUse := time.Since(start).Nanoseconds() / 1e6 //单位：ms
 	defer res.Body.Close()
 
 	body, err2 := ioutil.ReadAll(res.Body)
