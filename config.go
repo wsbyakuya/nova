@@ -21,6 +21,7 @@ var (
 	Api        string
 	Paras      map[string][]string
 	Cookies    map[string]string
+	Header     map[string]string
 )
 
 func loadConfig(filename string) {
@@ -114,14 +115,14 @@ func loadParas(filename string) {
 	}
 }
 
-func loadCookies(filename string) {
+func loadFile(filename string) map[string]string {
+	kv := make(map[string]string)
 	filename = GlobalPath + filename
-	Cookies = make(map[string]string)
 
 	f, err := os.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return
+			return nil
 		} else {
 			FailAndExit(err)
 		}
@@ -137,13 +138,13 @@ func loadCookies(filename string) {
 				continue
 			}
 			k, v := parseKeyValue(line)
-			Cookies[k] = v
+			kv[k] = v
 		}
 		if err == io.EOF {
 			break
 		}
 	}
-
+	return kv
 }
 
 func SplitAndTrim(line string) []string {

@@ -23,7 +23,10 @@ func scan(args []string) {
 	argsMap := Args(args).Parse()
 
 	if argsMap['c'] {
-		loadCookies("cookies.cfg")
+		Cookies = loadFile("cookies.cfg")
+	}
+	if argsMap['h'] {
+		Header = loadFile("header.cfg")
 	}
 
 	uri := "http://" + Host1
@@ -62,7 +65,7 @@ func scan(args []string) {
 	if argsMap['b'] {
 		reporter.IsSpread = true
 	}
-	if argsMap['h'] || argsMap['e'] {
+	if argsMap['e'] {
 		reporter.ExportHTML(argsMap['o'])
 	}
 }
@@ -73,6 +76,7 @@ func testItem(url string, r *report.Reporter) {
 		FailAndExit(err)
 	}
 	req.SetCookies(Cookies)
+	req.SetHeader(Header)
 
 	res, err2 := req.Do()
 	if err2 != nil {

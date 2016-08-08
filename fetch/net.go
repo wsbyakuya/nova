@@ -42,6 +42,15 @@ func (r *NovaRequest) SetCookies(cookies map[string]string) {
 	}
 }
 
+func (r *NovaRequest) SetHeader(header map[string]string) {
+	if len(header) == 0 {
+		return
+	}
+	for k, v := range header {
+		r.request.Header.Set(k, v)
+	}
+}
+
 func (r *NovaRequest) Do() (response *Response, err error) {
 	start := time.Now()
 
