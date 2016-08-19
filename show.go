@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -26,15 +28,20 @@ var (
 		Name:          "show",
 		ConfigRequest: CMD_BOTH_CONFIG,
 	}
+	cmdEdit = &Command{
+		Name:          "edit",
+		ConfigRequest: CMD_API_CONFIG,
+	}
 )
 
 func init() {
-	commands = append(commands, cmdVersion, cmdApi, cmdEnv, cmdHelp, cmdShow)
+	commands = append(commands, cmdVersion, cmdApi, cmdEnv, cmdHelp, cmdShow, cmdEdit)
 	cmdVersion.Run = showVersion
 	cmdApi.Run = showApi
 	cmdEnv.Run = showEnv
 	cmdHelp.Run = showUsage
 	cmdShow.Run = showAll
+	cmdEdit.Run = edit
 }
 
 func showVersion(args []string) {
@@ -59,8 +66,23 @@ func showApi(args []string) {
 		}
 	}
 	for k, v := range Paras {
-		str := strings.Join(v, ",")
+		str := strings.Join(v, "|")
 		fmt.Printf(PARA_FORMAT, k, str)
+	}
+
+	//show cookies
+	if len(Cookies) > 0 {
+		fmt.Println("Cookies:")
+		for k, v := range Cookies {
+			fmt.Printf(PARA_FORMAT, k, v)
+		}
+	}
+	//show header
+	if len(Header) > 0 {
+		fmt.Println("Header:")
+		for k, v := range Header {
+			fmt.Printf(PARA_FORMAT, k, v)
+		}
 	}
 }
 
@@ -89,4 +111,15 @@ Commands:
 	nova scan        扫描接口的所有参量组合
 	nova version     显示当前版本号`
 	fmt.Println(msg)
+}
+
+func edit(args []string) {
+	cmd := exec.Command("C:/Program Files/Sublime Text 3/sublime_text.exe")
+	file := "api.cfg"
+	path, err := os.Getwd()
+	if err == nil {
+		file = path + "/" + file
+	}
+	cmd.Args = append(cmd.Args, file)
+	cmd.Start()
 }

@@ -63,7 +63,15 @@ func newApiConfigFile(file, api string) error {
 
 api = %s
 
-# 参数配置`
+# 参数配置
+
+user_type = 0, 1
+user_role = 0, 1, 4, 6
+
+[cookies]
+
+
+[header]`
 
 	context = fmt.Sprintf(context, api)
 	_, err2 := f.Write([]byte(context))

@@ -21,8 +21,8 @@ func GetFullList(paras map[string][]string) []string {
 		lengths[i] = len(paras[k])
 		point[i] = 0
 	}
-	p := 0
-	for p < length {
+	p := length - 1
+	for p >= 0 {
 		//combine
 		str := []string{}
 		for k, _ := range keys {
@@ -31,15 +31,28 @@ func GetFullList(paras map[string][]string) []string {
 		list = append(list, strings.Join(str, "&"))
 
 		//pointer control
-		for p > 0 && point[p-1] == 0 {
-			p--
+		for p < length-1 && point[p+1] == 0 {
+			p++
 		}
 		point[p]++
 		for point[p] == lengths[p] {
 			point[p] = 0
-			p++
+			p--
 			point[p]++
 		}
 	}
 	return list
+}
+
+func GetRandomList(paras map[string][]string) []string {
+	list := GetFullList(paras)
+	length := len(list)
+	if length <= 3 {
+		return list
+	} else {
+		mid := length / 2
+		nlist := make([]string, 0, 3)
+		nlist = append(nlist, list[0], list[mid], list[length-1])
+		return nlist
+	}
 }

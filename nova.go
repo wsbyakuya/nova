@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const version = "0.6.0"
+const version = "0.7.0"
 
 const (
 	CMD_NO_CONFIG = iota
@@ -50,7 +50,7 @@ func loadConfigFiles(requestNum int) {
 		loadConfig("env.cfg")
 	}
 	if requestNum&CMD_API_CONFIG == CMD_API_CONFIG {
-		loadParas("api.cfg")
+		loadConfigFile("api.cfg")
 	}
 }
 

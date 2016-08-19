@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -19,10 +20,17 @@ var (
 var (
 	ConstParas []string
 	Api        string
+	Method     string
 	Paras      map[string][]string
 	Cookies    map[string]string
 	Header     map[string]string
 )
+
+func init() {
+	Paras = make(map[string][]string)
+	Cookies = make(map[string]string)
+	Header = make(map[string]string)
+}
 
 func loadConfig(filename string) {
 	var f *os.File
@@ -74,9 +82,8 @@ func loadConfig(filename string) {
 	}
 }
 
-func loadParas(filename string) {
-	filename = GlobalPath + filename
-	Paras = make(map[string][]string)
+func loadConfigFile(filename string) {
+	tag := "api"
 	f, err := os.Open(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -87,70 +94,61 @@ func loadParas(filename string) {
 	}
 	defer f.Close()
 
-	rd := bufio.NewReader(f)
-	for {
-		line, err := rd.ReadString('\n')
-		line = strings.Trim(line, "\r\n")
-		if line != "" {
-			if line[0] == '#' {
-				continue
+	buf, _ := ioutil.ReadAll(f)
+	ls := strings.Split(string(buf), "\n")
+	for _, v := range ls {
+		w := strings.Trim(v, "\r\n")
+		w = strings.Trim(w, " ")
+		if len(w) > 0 && w[0] != '#' {
+			if strings.HasPrefix(w, "[") && strings.HasSuffix(w, "]") {
+				tag = strings.ToLower(w[1 : len(w)-1])
+			} else {
+				setParameters(tag, w)
 			}
-			k, v := parseKeyValue(line)
-			if k == "api" {
-				Api = v
-				continue
-			}
-			//将固定参数分离，提高效率
-			vals := SplitAndTrim(v)
-			if len(vals) > 1 {
-				Paras[k] = vals
-			} else if len(vals) == 1 {
-				ConstParas = append(ConstParas, k+"="+v)
-			}
-
-		}
-		if err == io.EOF {
-			break
 		}
 	}
 }
 
-func loadFile(filename string) map[string]string {
-	kv := make(map[string]string)
-	filename = GlobalPath + filename
-
-	f, err := os.Open(filename)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
+func setParameters(tag, line string) {
+	key, value := parseKeyValue(line)
+	switch tag {
+	case "api":
+		if key == "api" {
+			Api = value
+			return
+		} else if key == "method" {
+			Method = strings.ToUpper(value)
+			return
+		}
+		vls := SplitAndTrim(value)
+		if len(vls) > 1 {
+			Paras[key] = vls
 		} else {
-			FailAndExit(err)
+			ConstParas = append(ConstParas, key+"="+value)
 		}
+	case "cookies", "cookie":
+		Cookies[key] = value
+	case "header", "headers":
+		Header[key] = value
 	}
-	defer f.Close()
-
-	rd := bufio.NewReader(f)
-	for {
-		line, err := rd.ReadString('\n')
-		line = strings.Trim(line, "\r\n")
-		if line != "" {
-			if line[0] == '#' {
-				continue
-			}
-			k, v := parseKeyValue(line)
-			kv[k] = v
-		}
-		if err == io.EOF {
-			break
-		}
-	}
-	return kv
 }
 
 func SplitAndTrim(line string) []string {
-	ss := strings.Split(line, ",")
-	for i := range ss {
-		ss[i] = strings.Trim(ss[i], " ")
+	var ss []string
+	if strings.Contains(line, ";") {
+		ss = strings.Split(line, ";")
+		for i := range ss {
+			slice := strings.Split(ss[i], ",")
+			for j := range slice {
+				slice[j] = strings.Trim(slice[j], " ")
+			}
+			ss[i] = strings.Join(slice, ",")
+		}
+	} else {
+		ss = strings.Split(line, ",")
+		for i := range ss {
+			ss[i] = strings.Trim(ss[i], " ")
+		}
 	}
 	return ss
 }

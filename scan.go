@@ -22,13 +22,6 @@ func init() {
 func scan(args []string) {
 	argsMap := Args(args).Parse()
 
-	if argsMap['c'] {
-		Cookies = loadFile("cookies.cfg")
-	}
-	if argsMap['h'] {
-		Header = loadFile("header.cfg")
-	}
-
 	uri := "http://" + Host1
 	if Port != "" {
 		uri = uri + ":" + Port

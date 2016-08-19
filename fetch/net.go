@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -31,6 +32,10 @@ func (r *NovaRequest) AddCookie(name, value string) {
 
 func (r *NovaRequest) AddUserAgent(userAgent string) {
 	r.request.Header.Add("User-Agent", userAgent)
+}
+
+func (r *NovaRequest) SetBody(body string) {
+	r.request.Body = NewBodyReadCloser(body)
 }
 
 func (r *NovaRequest) SetCookies(cookies map[string]string) {
@@ -91,4 +96,43 @@ func HttpGet(urlStr string) (response *Response, err error) {
 	}
 	res, err2 := req.Do()
 	return res, err2
+}
+
+func HttpPost(url, body string) (response *Response, err error) {
+	req, err := NewNovaRequest("POST", url)
+	if err != nil {
+		return nil, err
+	}
+	req.SetBody(body)
+	res, err2 := req.Do()
+	return res, err2
+}
+
+//BodyReadCloser实现io.ReadCloser的结构体，用于POST方法中读出字符串
+type BodyReadCloser struct {
+	s string
+	i int
+}
+
+func NewBodyReadCloser(body string) *BodyReadCloser {
+	return &BodyReadCloser{
+		s: body,
+		i: 0,
+	}
+}
+
+func (p *BodyReadCloser) Read(b []byte) (n int, err error) {
+	if len(p.s) == 0 {
+		return 0, nil
+	}
+	if p.i >= len(p.s) {
+		return 0, io.EOF
+	}
+	n = copy(b, []byte(p.s)[p.i:])
+	p.i += n
+	return n, nil
+}
+
+func (p *BodyReadCloser) Close() error {
+	return nil
 }

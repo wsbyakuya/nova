@@ -21,14 +21,10 @@ type Messager struct {
 	ItemNum    int
 }
 
-type Reporter struct {
-	size       int
-	pass_count int
-	time_count int
-	timeout    int
-	ReportText string
-	Msgs       []*Messager
-	IsSpread   bool
+func (m *Messager) FormatBody() {
+	if b := FormatDealIds(m.Body); b != "" {
+		m.Body = b
+	}
 }
 
 func NewReporter(size, timeout int) *Reporter {
@@ -39,6 +35,16 @@ func NewReporter(size, timeout int) *Reporter {
 		timeout:    timeout,
 		Msgs:       make([]*Messager, 0, size),
 	}
+}
+
+type Reporter struct {
+	size       int
+	pass_count int
+	time_count int
+	timeout    int
+	ReportText string
+	Msgs       []*Messager
+	IsSpread   bool
 }
 
 func (r *Reporter) Add(m *Messager) {
@@ -53,6 +59,7 @@ func (r *Reporter) Add(m *Messager) {
 	if m.Time < r.timeout {
 		m.TimeOK = true
 	}
+	m.FormatBody()
 	r.Msgs = append(r.Msgs, m)
 }
 
