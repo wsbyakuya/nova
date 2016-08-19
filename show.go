@@ -65,9 +65,11 @@ func showApi(args []string) {
 			fmt.Printf(PARA_FORMAT, ss[0], ss[1])
 		}
 	}
-	for k, v := range Paras {
-		str := strings.Join(v, "|")
-		fmt.Printf(PARA_FORMAT, k, str)
+	for _, v := range Paras {
+		if len(v) > 1 {
+			str := strings.Join(v[1:], "|")
+			fmt.Printf(PARA_FORMAT, v[0], str)
+		}
 	}
 
 	//show cookies

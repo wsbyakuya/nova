@@ -1,32 +1,33 @@
 package fetch
 
 import (
-	"sort"
 	"strings"
 )
 
-func GetFullList(paras map[string][]string) []string {
+func GetFullList(paras [][]string) []string {
 	list := []string{}
 	point := make(map[int]int)
 	length := len(paras)
 	lengths := make(map[int]int)
 
 	keys := make([]string, 0, len(paras))
-	for k, _ := range paras {
-		keys = append(keys, k)
+	for i := range paras {
+		if len(paras[i]) > 0 {
+			keys = append(keys, paras[i][0])
+			paras[i] = paras[i][1:]
+		}
 	}
-	sort.Strings(keys)
 
-	for i, k := range keys {
-		lengths[i] = len(paras[k])
+	for i := range keys {
+		lengths[i] = len(paras[i])
 		point[i] = 0
 	}
 	p := length - 1
 	for p >= 0 {
 		//combine
 		str := []string{}
-		for k, _ := range keys {
-			str = append(str, keys[k]+"="+paras[keys[k]][point[k]])
+		for i := range keys {
+			str = append(str, keys[i]+"="+paras[i][point[i]])
 		}
 		list = append(list, strings.Join(str, "&"))
 
@@ -44,7 +45,7 @@ func GetFullList(paras map[string][]string) []string {
 	return list
 }
 
-func GetRandomList(paras map[string][]string) []string {
+func GetRandomList(paras [][]string) []string {
 	list := GetFullList(paras)
 	length := len(list)
 	if length <= 3 {

@@ -21,13 +21,13 @@ var (
 	ConstParas []string
 	Api        string
 	Method     string
-	Paras      map[string][]string
+	Paras      [][]string
 	Cookies    map[string]string
 	Header     map[string]string
 )
 
 func init() {
-	Paras = make(map[string][]string)
+	Paras = make([][]string, 0)
 	Cookies = make(map[string]string)
 	Header = make(map[string]string)
 }
@@ -122,7 +122,9 @@ func setParameters(tag, line string) {
 		}
 		vls := SplitAndTrim(value)
 		if len(vls) > 1 {
-			Paras[key] = vls
+			kvs := []string{key}
+			kvs = append(kvs, vls...)
+			Paras = append(Paras, kvs)
 		} else {
 			ConstParas = append(ConstParas, key+"="+value)
 		}

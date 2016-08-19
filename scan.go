@@ -58,9 +58,7 @@ func scan(args []string) {
 	if argsMap['b'] {
 		reporter.IsSpread = true
 	}
-	if argsMap['e'] {
-		reporter.ExportHTML(argsMap['o'])
-	}
+	reporter.ExportHTML(argsMap['o'])
 }
 
 func testItem(url string, r *report.Reporter) {
